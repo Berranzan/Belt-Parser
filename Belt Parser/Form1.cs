@@ -22,7 +22,6 @@ namespace Belt_Parser
             ZminY = 45f;
             minY = 10000f;
             selectedFile = new OpenFileDialog();
-            //textBox2.Text = Angle.ToString();
             textBox2.Text = GetSetting("angle");
             bool result = double.TryParse(textBox2.Text, out Angle);
             if (!result)
@@ -38,7 +37,6 @@ namespace Belt_Parser
         private void OpenFile(object sender, EventArgs e)
         {
             // Displays an OpenFileDialog so the user can select a file.  
-            //selectedFile = new OpenFileDialog();
             bool result = double.TryParse(textBox2.Text, out Angle);
             if (!result)
             {
@@ -59,10 +57,7 @@ namespace Belt_Parser
             // a .gcode file was selected, open it.  
             if (selectedFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                // Assign the cursor in the Stream to the Form's Cursor property.  
-                //this.Cursor = new Cursor(openFileDialog1.OpenFile());
                 textBox1.Text = selectedFile.FileName;
-                // GcodeStream = selectedFile.OpenFile();
                 textBox1.Update();
                 FindLayerCount();
                 CheckAngle();
@@ -92,13 +87,11 @@ namespace Belt_Parser
             bool codeStart = false;
             foreach (string line in File.ReadLines(selectedFile.FileName))
             {
-                if (line.StartsWith(";LAYER:"))//make sure we are reading layers and not start gcode
+                if (line.StartsWith(";LAYER:"))//make sure we are reading layers and not the start gcode
                 {
                     codeStart = true;
                     lineCount = line.Replace(";LAYER:", "");
-                    //textBox4.Text = lineCount;
                 }
-                //if ((line.Contains("G1") || line.Contains("G0"))&codeStart)// & line.Contains("Z"))
                 if (line.Contains("G0") && codeStart)
                 {
                     String value = line.ToString();
@@ -119,17 +112,6 @@ namespace Belt_Parser
                     String value = line.ToString();
                     Char delimiter = ' ';
                     String[] substrings = value.Split(delimiter);
-                    /*
-                    foreach (var substring in substrings)
-                    {
-                        if (substring.Contains("Z"))
-                        {
-                            Zlayer = Convert.ToDouble(substring.Remove(0, 1));
-                            if (firstZ == 10000)
-                                firstZ = Zlayer;
-                        }
-                    }
-                    */
                     foreach (var substring in substrings)
                     {
                         if (substring.Contains("Y"))
@@ -153,46 +135,6 @@ namespace Belt_Parser
             textBox3.Text = newAngle.ToString("G");
 
         }
-        
-        /*
-        private void button4_Click(object sender, EventArgs e)
-        {
-            double currentY = 10000;
-            double maxiY = -10000;
-            double miniY = 10000; 
-            bool codeStart = false;
-            foreach (string line in lines)
-            {
-                if (line.StartsWith(";LAYER:"))//make sure we are reading layers and not start gcode
-                    codeStart = true;
-                if ((line.Contains("G1") || line.Contains("G0"))&codeStart)// & line.Contains("Z"))
-                {
-                    String value = line.ToString();
-                    Char delimiter = ' ';
-                    String[] substrings = value.Split(delimiter);
-                    
-                    foreach (var substring in substrings)
-                    {
-                        if (substring.Contains("Y"))
-                        {
-                            currentY = Convert.ToDouble(substring.Remove(0, 1));
-                            if (currentY < miniY)
-                            {
-                                miniY = currentY;
-                                label5.Text = Convert.ToString(miniY);
-                            }
-                            if (currentY > maxiY)
-                            {
-                                maxiY = currentY;
-                                label6.Text = Convert.ToString(maxiY);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        */
-
         private void button5_Click(object sender, EventArgs e)
         {
             saveSelectedFile = new SaveFileDialog();
@@ -212,7 +154,6 @@ namespace Belt_Parser
                 return;
             }
             textBox2.Text = textBox3.Text;
-            //Angle = (double)newAngle;
             bool result = double.TryParse(textBox2.Text, out Angle);
             if (!result)
             {
@@ -227,7 +168,6 @@ namespace Belt_Parser
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            //Angle = Convert.ToDouble(textBox2.Text);
             bool result = double.TryParse(textBox2.Text, out Angle);
             if (!result)
             {
@@ -266,7 +206,7 @@ namespace Belt_Parser
             foreach (string line in File.ReadLines(selectedFile.FileName))
             {
                 newLine = line;
-                if (line.StartsWith(";LAYER:"))//make sure we are reading layers and not start gcode
+                if (line.StartsWith(";LAYER:"))//make sure we are reading layers and not the start gcode
                     codeStart = true;
                 if (line.Contains("G0") && codeStart)
                 {
@@ -278,8 +218,6 @@ namespace Belt_Parser
                         if (substring.Contains("Z"))
                         {
                             Zlayer = Convert.ToDouble(substring.Remove(0, 1));
-                            // if (firstZ == 10000)
-                            //     firstZ = Zlayer;
                         }
                     }
                 }
@@ -288,15 +226,6 @@ namespace Belt_Parser
                     String value = line.ToString();
                     Char delimiter = ' ';
                     String[] substrings = value.Split(delimiter);
-                    /*
-                    foreach (var substring in substrings)
-                    {
-                        if (substring.Contains("Z"))
-                        {
-                            Zlayer = Convert.ToDouble(substring.Remove(0, 1));
-                        }
-                    }
-                    */
                     int k = 0;
                     foreach (var substring in substrings)
                     {
@@ -306,8 +235,6 @@ namespace Belt_Parser
                             currentY = Convert.ToDouble(substring.Remove(0, 1));
                             deltaZ = ZminY - Zlayer;
                             double newValue = Math.Round((currentY - minY - deltaZ / Math.Tan(Angle * (Math.PI / 180.0))), 5);
-                            // if (newValue < 0)
-                            //     newValue = 0.001;
                             if (newValue < miniY)
                             {
                                 miniY = newValue;
@@ -342,13 +269,11 @@ namespace Belt_Parser
             bool codeStart = false;
             foreach (string line in File.ReadLines(selectedFile.FileName))
             {
-                if (line.StartsWith(";LAYER:"))//make sure we are reading layers and not start gcode
+                if (line.StartsWith(";LAYER:"))//make sure we are reading layers and not the start gcode
                 {
                     codeStart = true;
                     lineCount = line.Replace(";LAYER:", "");
-                    //textBox4.Text = lineCount;
                 }
-                //if ((line.Contains("G1") || line.Contains("G0"))&codeStart)// & line.Contains("Z"))
                 if (line.Contains("G0") && codeStart)
                 {
                     String value = line.ToString();
@@ -364,22 +289,11 @@ namespace Belt_Parser
                         }
                     }
                 }
-                if (line.Contains("G1") && codeStart)// && (Convert.ToDouble(lineCount)==layer))
+                if (line.Contains("G1") && codeStart)
                 {
                     String value = line.ToString();
                     Char delimiter = ' ';
                     String[] substrings = value.Split(delimiter);
-                    /*
-                    foreach (var substring in substrings)
-                    {
-                        if (substring.Contains("Z"))
-                        {
-                            Zlayer = Convert.ToDouble(substring.Remove(0, 1));
-                            if (firstZ == 10000)
-                                firstZ = Zlayer;
-                        }
-                    }
-                    */
                     foreach (var substring in substrings)
                     {
                         if (substring.Contains("Y"))
@@ -387,7 +301,7 @@ namespace Belt_Parser
                             currentY = Convert.ToDouble(substring.Remove(0, 1));
                             if (firstY == 10000)
                                 firstY = currentY;
-                            if ((Convert.ToInt32(lineCount) == layer) && (currentY < minY)) //if (currentY < minY)
+                            if ((Convert.ToInt32(lineCount) == layer) && (currentY < minY)) 
                             {
                                 minY = currentY;
                                 ZminY = Zlayer;
@@ -429,7 +343,7 @@ namespace Belt_Parser
             foreach (string line in File.ReadLines(selectedFile.FileName))
             {
                 newLine = line;
-                if (line.StartsWith(";LAYER:"))//make sure we are reading layers and not start gcode
+                if (line.StartsWith(";LAYER:"))//make sure we are reading layers and not the start gcode
                     codeStart = true;
                 if ((line.Contains("G1") || line.Contains("G0")) & codeStart)
                 {
@@ -454,7 +368,6 @@ namespace Belt_Parser
                             double newValue = Math.Round((currentY - minY - deltaZ / Math.Tan(Angle * (Math.PI / 180.0))), 5);
                             if (newValue < 0)
                                 newValue = 0.001;
-                            //newLine = line.Replace(substring, "Y" + newValue.ToString("#,0.#####"));
                             newLine = line.Replace(substring, "Y" + newValue.ToString("G"));
                         }
                         k++;
@@ -468,7 +381,7 @@ namespace Belt_Parser
             }
             saveSelectedFile = new SaveFileDialog();
             string fileName = Path.GetFileNameWithoutExtension(selectedFile.FileName);
-            saveSelectedFile.FileName = fileName + "_Belt.gcode";//.Replace(".gcode", "_Belt.gcode");
+            saveSelectedFile.FileName = fileName + "_Belt.gcode";
             if (saveSelectedFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 System.IO.File.WriteAllLines(saveSelectedFile.FileName, lines);
@@ -489,7 +402,7 @@ namespace Belt_Parser
             foreach (string line in File.ReadLines(selectedFile.FileName))
             {
                 newLine = line;
-                if (line.StartsWith(";LAYER:"))//make sure we are reading layers and not start gcode
+                if (line.StartsWith(";LAYER:"))//make sure we are reading layers and not the start gcode
                 {
                     codeStart = true;
                     layerCount = (Convert.ToInt32(line.Replace(";LAYER:", "")));
@@ -513,7 +426,7 @@ namespace Belt_Parser
                         if (substring.Contains("Y"))
                         {
                             currentY = Convert.ToDouble(substring.Remove(0, 1));
-                            if ((layerCount == 0) && (currentY > Yoffset)) //if (currentY < minY)
+                            if ((layerCount == 0) && (currentY > Yoffset)) 
                             {
                                 Yoffset = currentY+Zlayer/Math.Tan(Angle * (Math.PI / 180.0));
                                 ZminY = Zlayer;
@@ -522,7 +435,6 @@ namespace Belt_Parser
                             double newValue = Math.Round((currentY - Yoffset + deltaZ / Math.Tan(Angle * (Math.PI / 180.0))), 5);
                             if (newValue < 0)
                                 newValue = 0.001;
-                            //newLine = line.Replace(substring, "Y" + newValue.ToString("#,0.#####"));
                             newLine = line.Replace(substring, "Y" + newValue.ToString("G"));
                         }
                         k++;
@@ -536,7 +448,7 @@ namespace Belt_Parser
             }
             saveSelectedFile = new SaveFileDialog();
             string fileName = Path.GetFileNameWithoutExtension(selectedFile.FileName);
-            saveSelectedFile.FileName = fileName + "_Belt.gcode";//.Replace(".gcode", "_Belt.gcode");
+            saveSelectedFile.FileName = fileName + "_Belt.gcode";
             if (saveSelectedFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 System.IO.File.WriteAllLines(saveSelectedFile.FileName, lines);
