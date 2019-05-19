@@ -18,9 +18,9 @@ namespace Belt_Parser
         {
             InitializeComponent();
             Angle = 39.5f;
+            Slope = 0.0;
             Yoffset = -1000000;
             ZminY = 45f;
-            minY = 10000f;
             selectedFile = new OpenFileDialog();
             textBox2.Text = GetSetting("angle");
             bool result = double.TryParse(textBox2.Text, out Angle);
@@ -31,6 +31,16 @@ namespace Belt_Parser
             else
             {
                 label1.Text = "Angle";
+            }
+            textBox5.Text = GetSetting("slope");
+            result = double.TryParse(textBox5.Text, out Slope);
+            if (!result)
+            {
+                label3.Text = "Slope not valid";
+            }
+            else
+            {
+                label3.Text = "Slope (%)";
             }
         }
 
@@ -165,6 +175,19 @@ namespace Belt_Parser
                 SetSetting("angle", textBox2.Text);
             }
         }
+        private void ApplySlope(object sender, EventArgs e)
+        {
+            bool result = double.TryParse(textBox5.Text, out Slope);
+            if (!result)
+            {
+                label3.Text = "Slope not valid";
+            }
+            else
+            {
+                label3.Text = "Slope (%)";
+                SetSetting("slope", textBox5.Text);
+            }
+        }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
@@ -193,6 +216,7 @@ namespace Belt_Parser
             ConfigurationManager.RefreshSection("appSettings");
         }
 
+        /*
         private void CheckDeviation(object sender, EventArgs e)
         {
             double currentY = 10000;
@@ -251,6 +275,7 @@ namespace Belt_Parser
                 }
             }
         }
+        */
 
         private void RecalculateAngle(object sender, EventArgs e)
         {
@@ -366,6 +391,7 @@ namespace Belt_Parser
                             currentY = Convert.ToDouble(substring.Remove(0, 1));
                             deltaZ = ZminY - Zlayer;
                             double newValue = Math.Round((currentY - minY - deltaZ / Math.Tan(Angle * (Math.PI / 180.0))), 5);
+                            newValue = newValue + (newValue / 100 * Slope); //add slope correction in percents
                             if (newValue < 0)
                                 newValue = 0.001;
                             newLine = line.Replace(substring, "Y" + newValue.ToString("G"));
@@ -433,6 +459,7 @@ namespace Belt_Parser
                             }
                             deltaZ = Zlayer - ZminY;
                             double newValue = Math.Round((currentY - Yoffset + deltaZ / Math.Tan(Angle * (Math.PI / 180.0))), 5);
+                            newValue = newValue + (newValue / 100 * Slope); //add slope correction in percents
                             if (newValue < 0)
                                 newValue = 0.001;
                             newLine = line.Replace(substring, "Y" + newValue.ToString("G"));
